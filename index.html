@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Valentine</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  overflow: hidden;
+  height: 100vh;
+  background: radial-gradient(circle at top, #5b2b6f, #2b0f3a);
+}
+
+/* DISCO OVERLAY */
+#discoOverlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, rgba(0,0,0,0.25), rgba(0,0,0,0.7));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+  z-index: 5;
+}
+#discoOverlay.active {
+  animation: discoPulse 2.2s ease-in-out infinite;
+  opacity: 1;
+}
+@keyframes discoPulse {
+  0%,100% { background: rgba(0,0,0,0.35); }
+  50% { background: rgba(0,0,0,0.7); }
+}
+
+/* HEARTS */
+.heart {
+  position: absolute;
+  font-size: 22px;
+  animation: floatUp linear infinite;
+  opacity: 0.85;
+  z-index: 6;
+}
+@keyframes floatUp {
+  from { transform: translateY(100vh) scale(0.9); }
+  to { transform: translateY(-10vh) scale(1.4); }
+}
+
+/* CENTER */
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+/* TITLE */
+.title {
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 20px #ff4d6d;
+  min-height: 3em;
+}
+
+/* BUTTONS */
+.buttons {
+  margin-top: 28px;
+  display: flex;
+  gap: 20px;
+}
+button {
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+}
+#yesBtn,#noBtn { display: none; }
+#yesBtn { background:#ff4d6d; color:#fff; }
+#noBtn { background:#333; color:#fff; position:relative; }
+
+/* CELEBRATION */
+#celebration {
+  display: none;
+  position: absolute;
+  inset: 0;
+}
+
+/* PHOTO */
+.photo {
+  width: 240px;
+  border-radius: 22px;
+  margin-bottom: 16px;
+  box-shadow: 0 25px 45px rgba(0,0,0,0.45);
+  animation:
+    photoPop 0.9s ease forwards,
+    floatPhoto 4s ease-in-out infinite;
+}
+@keyframes photoPop {
+  from { transform: scale(0) rotate(0deg); opacity:0; }
+  to { transform: scale(1) rotate(-2deg); opacity:1; }
+}
+@keyframes floatPhoto {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-12px) rotate(-2deg); }
+}
+
+/* TEXT */
+.yay-text {
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #ff4d6d;
+  text-shadow: 0 0 22px rgba(255,77,109,0.95);
+}
+.sub-text {
+  font-size: 1.6rem;
+  color: #ff4d6d;
+  text-shadow: 0 0 18px rgba(255,77,109,0.9);
+}
+
+/* SPOTIFY */
+.spotify-wrap {
+  margin-top: 28px;
+  padding: 14px;
+  border-radius: 20px;
+  background: radial-gradient(circle, rgba(30,215,96,0.25), rgba(0,0,0,0));
+  box-shadow: 0 0 40px rgba(30,215,96,0.45);
+}
+iframe {
+  width: 320px;
+  height: 80px;
+  border-radius: 12px;
+}
+
+/* FIREWORKS */
+.firework {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 #fff,
+    0 0 #ff4d6d,
+    0 0 #ffd166,
+    0 0 #c77dff;
+  animation: explode 1.2s ease-out forwards;
+  z-index: 7;
+}
+@keyframes explode {
+  from { transform: scale(0.1); opacity:1; }
+  to { transform: scale(18); opacity:0; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="discoOverlay"></div>
+
+<div class="container" id="main">
+  <div class="title" id="typingText"></div>
+  <div class="buttons">
+    <button id="yesBtn">YES</button>
+    <button id="noBtn">NO</button>
+  </div>
+</div>
+
+<div id="celebration">
+  <div class="container">
+    <img src="photo.jpg" class="photo" alt="Us">
+    <div class="yay-text">Yay! 💖</div>
+    <div class="sub-text">Sumanth will be so happy!</div>
+
+    <div class="spotify-wrap">
+      <iframe
+        id="spotifyFrame"
+        src="https://open.spotify.com/embed/track/746qSdTQZ56ZnMhtaJL9jf"
+        frameborder="0"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+/* TYPING */
+const text = "💖 WILL YOU BE MY VALENTINE, VASAVI? 💖";
+let i = 0;
+const typingEl = document.getElementById("typingText");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+
+function typeText() {
+  if (i < text.length) {
+    typingEl.innerHTML += text[i++];
+    setTimeout(typeText, 55);
+  } else {
+    yesBtn.style.display = "inline-block";
+    noBtn.style.display = "inline-block";
+  }
+}
+typeText();
+
+/* HEARTS */
+const hearts = ["❤️","💖","💘","💕"];
+setInterval(() => {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerText = hearts[Math.floor(Math.random()*hearts.length)];
+  h.style.left = Math.random()*100+"vw";
+  h.style.animationDuration = 4+Math.random()*4+"s";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),9000);
+},300);
+
+/* NO RUN */
+noBtn.onmouseover = () => {
+  noBtn.style.position = "absolute";
+  noBtn.style.left = Math.random()*80+"vw";
+  noBtn.style.top = Math.random()*80+"vh";
+};
+
+let vibrationInterval = null;
+
+/* STOP VIBRATION SAFELY */
+function stopVibration() {
+  if (vibrationInterval) {
+    clearInterval(vibrationInterval);
+    vibrationInterval = null;
+    if ("vibrate" in navigator) navigator.vibrate(0);
+  }
+}
+
+/* YES CLICK */
+yesBtn.onclick = () => {
+  document.getElementById("main").style.display = "none";
+  document.getElementById("celebration").style.display = "block";
+  document.getElementById("discoOverlay").classList.add("active");
+  startFireworksAndVibration();
+};
+
+/* FIREWORKS + VIBRATION */
+function startFireworksAndVibration() {
+  const bpm = 90;
+  const interval = 60000 / bpm;
+
+  if ("vibrate" in navigator) {
+    vibrationInterval = setInterval(() => navigator.vibrate(40), interval);
+
+    // auto stop after 30s
+    setTimeout(stopVibration, 30000);
+  }
+
+  setInterval(() => {
+    const f = document.createElement("div");
+    f.className = "firework";
+    f.style.left = Math.random()*window.innerWidth+"px";
+    f.style.top = Math.random()*window.innerHeight+"px";
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1200);
+  }, interval);
+}
+
+/* STOP vibration when user leaves or pauses */
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) stopVibration();
+});
+window.addEventListener("blur", stopVibration);
+document.getElementById("spotifyFrame").addEventListener("pointerdown", stopVibration);
+</script>
+
+</body>
+</html>
